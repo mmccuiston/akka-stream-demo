@@ -6,24 +6,20 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 object FlowExample extends App {
   implicit val system = ActorSystem( "demo" )
 
-  val intToStringFlow = Flow[Int].map( _.toString )
+  val digitCountFlow = Flow[Int]
+    .map( _.toString )
+    .map( _.length )
 
-  val evensSource = Source( 0 to 10 by 2 )
-  val oddsSource = Source( 1 to 11 by 2 )
+  val numberSource = Source( 0 to 100 )
 
-  val sink = Sink.foreach[String]( println )
+  val sink = Sink.foreach[Int]( println )
 
-  evensSource
-    .via( intToStringFlow )
+  numberSource
+    .via( digitCountFlow )
     .to( sink )
     .run()
 
   Thread.sleep( 1000 )
-
-  oddsSource
-    .via( intToStringFlow )
-    .to( sink )
-    .run()
 
   system.terminate()
 }
