@@ -12,8 +12,8 @@ object ChatServer extends App {
 
   val ( sink, source ) =
     MergeHub
-      .source[Message]( perProducerBufferSize = 16 )
-      .toMat( BroadcastHub.sink( bufferSize = 256 ) )( Keep.both )
+      .source[Message]
+      .toMat( BroadcastHub.sink )( Keep.both )
       .run() //Runs stream and exposes materialized values Source and Sink
 
   val webSocketDirective = path( "chat" ) {
@@ -22,7 +22,7 @@ object ChatServer extends App {
     )
   }
 
-  val indexDirective = path( "index.html" ) {
+  val indexDirective = pathSingleSlash {
     getFromResource( "index.html" )
   }
 
